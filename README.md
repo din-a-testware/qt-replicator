@@ -41,3 +41,28 @@ Though it is at a good usable stage, much work has to be done. The code in gener
 A Video will be available soon too.
 
 So far, have fun with it. :)
+
+And now some screenshots:
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_database1.png "Music Database Folders")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_database2.png "Music Database Artists")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_start.png "Media Tab")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/music_player1.png "Music Player Details")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/music_player_playlist.png "Music Player Playlist")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/music_player_mode.png "Music Player Playback Mode")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_database1.png "Music Database Folders")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/notes.png "Notes")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/recipe_read.png "The recipe itself")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/recipe_search.png "Search recipe")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/recipe_start.png "Recipe start with image")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/serversettings.png "Server settings")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/settings_1.png "Some settings")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/settings_display.png "Display Settings")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_ambient.png "Ambient sounds")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_audio.png "Audio settings")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_equalizer.png "Equalizer")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_language.png "Language chooser")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_locked.png "Lock screen")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_network.png "Network interfaces")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_run.png "System command")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system.png "System")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/timer.png "Timer")
