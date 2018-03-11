@@ -1,0 +1,191 @@
+<!DOCTYPE structure>
+<REPLICATOR>
+    <INTERFACE>
+        <TRANSLATIONS DEFAULT="de">
+            <LANG CODE="de" NAME="DEUTSCH (DEUTSCHLAND)">
+                <MAINMENU>
+                    <TITLE>REZEPT AUSSUCHEN</TITLE>
+                    <TIMER>Timer</TIMER>
+                    <MEDIA>Media</MEDIA>
+                    <RECIPE>Rezept</RECIPE>
+                    <SEARCH>Suche</SEARCH>
+                    <SYSTEM>System</SYSTEM>
+                </MAINMENU>
+                <TIMER>
+                    <TITLE>TIMER</TITLE>
+                    <TIMERNAME>TIMER NAME</TIMERNAME>
+                    <NEWTIMER>NEUER TIMER TEST NEUE ZEILE</NEWTIMER>
+                    <PAUSE>PAUSE</PAUSE>
+                    <STOP>AUSSCHALTEN</STOP>
+                    <EDIT>BEARBEITEN</EDIT>
+                    <START>START</START>
+                    <RESET>RESET</RESET>
+                    <SAVE>SPEICHERN</SAVE>
+                    <DELETE>ENTFERNEN</DELETE>
+                    <NEW>NEU</NEW>
+                    <CURRENT>AKTUELLE ZEIT</CURRENT>
+                    <TIMEOUT>ABLAUFZEIT</TIMEOUT>
+                    <INACTIVE>INAKTIV</INACTIVE>
+                </TIMER>
+                <SYSTEM>
+                    <TITLE>SYSTEM></TITLE>
+                    <SETTINGS>Einstellungen</SETTINGS>
+                    <NOTES>NOTIZEN</NOTES>
+                    <LOCK>SYSTEM SPERREN</LOCK>
+                </SYSTEM>
+                <RECIPE>
+                    <NEXT>WEITER</NEXT>
+                    <PREVIOUS>ZURÜCK</PREVIOUS>
+                </RECIPE>
+                <SEARCH>
+                    <TITLE>SUCHE</TITLE>
+                    <SEARCH>Suchen nach</SEARCH>
+                </SEARCH>
+                <DISCONNECTED>
+                    <TITLE>NICHT VERBUNDEN</TITLE>
+                    <CONTROLTITLE>REPLIKATOR KONTROLLE</CONTROLTITLE>
+                    <ERRORMESSAGE>FEHLER: KEINE VERBINDUNG ZUM SERVER</ERRORMESSAGE>
+                    <RETRY>ERNEUT VERSUCHEN</RETRY>
+                </DISCONNECTED>
+                <LOCKSCREEN>
+                    <TOPTITLE>REPLICATOR PANEL • NCC1701 D</TOPTITLE>
+                    <CONTROLTITLE>REPLIKATOR KONTROLLE</CONTROLTITLE>
+                    <MESSAGE_LOCKED>NUR AUTHORISIERTES PERSONAL</MESSAGE_LOCKED>
+                    <MESSAGE_ACCESSGRANTED>ZUGRIFF GEWÄHRT</MESSAGE_ACCESSGRANTED>
+                    <BOTTOMTITLE>SYSTEM GESPERRT</BOTTOMTITLE>
+                    <ALPHA>ALPHA</ALPHA>
+                    <BETA>BETA</BETA>
+                    <GAMMA>GAMMA</GAMMA>
+                    <DELTA>DELTA</DELTA>
+                </LOCKSCREEN>
+                <REDALERT>
+                    <DISABLE>AUSSCHALTEN</DISABLE>
+                </REDALERT>
+                <TOPCONTROLS>
+                    <HIDE>HIDE</HIDE>
+                    <MPLAYER>M-PLAYER</MPLAYER>
+                    <VPLAYER>V-PLAYER</VPLAYER>
+                </TOPCONTROLS>
+                <SETTINGS>
+                    <LANGUAGE>
+                        <TITLE>SPRACHEN</TITLE>
+                        <TITLE_DESCRIPTION>LISTE DER VERFÜGBAREN SPRACHEN •</TITLE_DESCRIPTION>
+                        <DESCRIPTION>UM DEN STANDARD FÜR DIE OBERFLÄCHENSPRACHE ZU SETZEN, WÄHLEN SIE ENTWEDER DIE SPRACHE AUS DER LISTE AUS ODER BETÄTIGEN DEN REGLER. VOR DEM BEENDEN BITTE SPEICHERN.</DESCRIPTION>
+                    </LANGUAGE>
+                </SETTINGS>
+            </LANG>
+            
+            <LANG CODE="gb" NAME="ENGLISH (GB)">
+                <MAINMENU>
+                    <TITLE>SELECT RECIPE</TITLE>
+                    <TIMER>Timer</TIMER>
+                    <MEDIA>Media</MEDIA>
+                    <RECIPE>Recipe</RECIPE>
+                    <SEARCH>Search</SEARCH>
+                    <SYSTEM>System</SYSTEM>
+                </MAINMENU>
+                <TIMER>
+                    <TITLE>TIMER</TITLE>
+                    <TIMERNAME>TIMER NAME</TIMERNAME>
+                    <NEWTIMER>NEW TIMER</NEWTIMER>
+                    <PAUSE>PAUSE</PAUSE>
+                    <STOP>STOP</STOP>
+                    <EDIT>EDIT</EDIT>
+                    <START>START</START>
+                    <RESET>RESET</RESET>
+                    <SAVE>SAVE</SAVE>
+                    <DELETE>DELETE</DELETE>
+                    <NEW>NEW</NEW>
+                    <CURRENT>CURRENT TIME</CURRENT>
+                    <TIMEOUT>TIMEOUT</TIMEOUT>
+                    <INACTIVE>INACTIVE</INACTIVE>
+                </TIMER>
+                <SYSTEM>
+                    <SETTINGS>SETTINGS</SETTINGS>
+                </SYSTEM>
+                <RECIPE>
+                    <NEXT>NEXT</NEXT>
+                    <PREVIOUS>PREVIOUS</PREVIOUS>
+                </RECIPE>
+                <SEARCH>
+                    <TITLE>SEARCH</TITLE>
+                    <SEARCH>SEARCH FOR</SEARCH>
+                </SEARCH>
+                    <DISCONNECTED>
+                    <TITLE>DISCONNECTED</TITLE>
+                    <CONTROLTITLE>REPLICATOR CONTROL</CONTROLTITLE>
+                    <ERRORMESSAGE>ERROR: NO CONNECTION TO SERVER</ERRORMESSAGE>
+                    <RETRY>RETRY</RETRY>
+                </DISCONNECTED>
+                <LOCKSCREEN>
+                    <TOPTITLE>REPLICATOR PANEL • NCC1701 D</TOPTITLE>
+                    <CONTROLTITLE>REPLICATOR CONTROL</CONTROLTITLE>
+                    <MESSAGE_LOCKED>AUTHORIZED PERSONELL ONLY</MESSAGE_LOCKED>
+                    <MESSAGE_ACCESSGRANTED>ACCESS GRANTED</MESSAGE_ACCESSGRANTED>
+                    <BOTTOMTITLE>SYSTEM LOCKED</BOTTOMTITLE>
+                    <ALPHA>ALPHA</ALPHA>
+                    <BETA>BETA</BETA>
+                    <GAMMA>GAMMA</GAMMA>
+                    <DELTA>DELTA</DELTA>
+                </LOCKSCREEN>
+                <REDALERT>
+                    <DISABLE>AUSSCHALTEN</DISABLE>
+                </REDALERT>
+                <TOPCONTROLS>
+                    <HIDE>HIDE</HIDE>
+                    <MPLAYER>M-PLAYER</MPLAYER>
+                    <VPLAYER>V-PLAYER</VPLAYER>
+                </TOPCONTROLS>
+                <SETTINGS>
+                    <LANGUAGE>
+                        <TITLE>LANGUAGE</TITLE>
+                        <TITLE_DESCRIPTION>LIST OF AVAILABLE LANGUAGES •</TITLE_DESCRIPTION>
+                        <DESCRIPTION>TO SET THE STANDARD LANGUAGE FOR THE INTERFACE, EITHER SELECT THE LANGUAGE FROM THE LIST OR USE THE CONTROLLER. PLEASE SAVE BEFORE QUITTING.</DESCRIPTION>
+                    </LANGUAGE>
+                </SETTINGS>
+            </LANG>  
+                
+            <?invalid
+            <LANG CODE="ch" NAME="DEUTSCH (SCHWEIZ)">
+            </LANG>
+            ?>
+            
+        </TRANSLATIONS>
+    </INTERFACE>
+    <MEDIA>
+        <VOLUME>
+            <MAIN>100</MAIN>
+            <MENU>100</MENU>
+            <MEDIA>100</MEDIA>
+        </VOLUME>
+    </MEDIA>
+    <TIMER>
+        <PRESETS COUNT="3">
+            <ENTRY ID="0">
+                <NAME>AUFWÄRMEN</NAME>
+                <H>00</H>
+                <M>20</M>
+                <S>00</S>
+            </ENTRY>
+            <ENTRY ID="1">
+                <NAME>KAUSTANGEN AUFGETAUT</NAME>
+                <H>00</H>
+                <M>10</M>
+                <S>00</S>
+            </ENTRY>
+            <ENTRY ID="2">
+                <NAME>KAUSTANGEN GEFROREN</NAME>
+                <H>00</H>
+                <M>15</M>
+                <S>00</S>
+            </ENTRY>
+        </PRESETS>            
+    </TIMER>
+    <DATABASE>
+        <SERVER>
+            <PROTOCOL>ws</PROTOCOL>
+            <ADDRESS>192.168.1.66</ADDRESS>
+            <PORT>1701</PORT>
+        </SERVER>
+    </DATABASE>
+</REPLICATOR>
