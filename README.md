@@ -19,7 +19,9 @@ An Android-version is also a work-in-progress.
 **Videoplayer**: Same as the music player, though the database function is not written yet.
 
 **Notes**: Some notes can be written into the database.
+
 **Mark recipes**: You can mark the recipes you like or want to use in the (near) future.
+
 **Timer**: Countdown timer, so you don't have to look at the clock. When it has timed out, the red alert will start. Presets are also available.
 
 **Ambient sounds**: Maybe you like to have an ambient warpcore-sound, so it can be enabled. You can also add your own sounds too.
