@@ -75,3 +75,8 @@ And now some screenshots:
 ![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system_run.png "System command")
 ![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/system.png "System")
 ![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/timer.png "Timer")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/database_settings.png "Database settings")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/keyboard1.png "Keyboard")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/keyboard2.png "Keyboard")
+![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/keyboard3.png "Keyboard")
+
