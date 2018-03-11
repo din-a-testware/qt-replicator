@@ -31,6 +31,13 @@ Lock system: opens a form where you have to pass a code with the four buttons. A
 
 **Language support**: A translation system is also implemented. At the moment there are German and English translations available. Feel free to contribute more :)
 
+***Not yet 100% implemented, but started***
+
+**Equalizer**: An audio equalizer. This will be implemented, when switched to QtAv
+
+**Color themes**: Started work on it. 
+
+
 ***The server:***
 The server has a command line option to activate a user-input console, where you can set/get settings or execute a SQLite or system-command. It is in an early stage so it is a *little* bit buggy.
 
