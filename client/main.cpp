@@ -7,7 +7,8 @@
 #include "settings.h"
 #include <QApplication>
 #include "globalvars.h"
-
+#include <QDir>
+#include <QtSql>
 QString VideoFile = "";
 QStringList code_temp;
 
@@ -15,6 +16,24 @@ bool StopTheRedAlert;
 
 int main(int argc, char *argv[])
 {
+
+    QString scaleFacor;
+    QSqlDatabase dbInitial = QSqlDatabase::addDatabase("QSQLITE", "initialSetting");
+    dbInitial.setDatabaseName(settingsDbFile);
+
+    if(dbInitial.open()) {
+        QSqlQuery query(QSqlDatabase::database("initialSetting"));
+        query.prepare("SELECT `scale_factor` FROM settings WHERE id='0'");
+        query.exec();
+        while (query.next()) {
+            scaleFacor=query.value(0).toString();
+        }
+
+    }
+    qputenv("QT_SCALE_FACTOR", qPrintable(scaleFacor));
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); //HiDPI pixmaps
+
     QApplication a(argc, argv);
     Q_UNUSED(systemSpeed);
     Q_UNUSED(devmode);
@@ -24,13 +43,20 @@ int main(int argc, char *argv[])
     if (devmode == false) {
         a.setOverrideCursor(Qt::BlankCursor);
     }
+
+
     MainWindow w;
     w.setWindowIcon(QIcon(":/images/replicator_database_orange_red.png"));
     //w.setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
 
     w.setWindowFlags(Qt::FramelessWindowHint| Qt::Window);
     w.setAttribute(Qt::WA_OpaquePaintEvent);
-    w.show();
+
+    if (QDir::homePath() == "/home/pi" || QDir::homePath() == "/root") {
+        w.showFullScreen();
+    } else {
+        w.showFullScreen();
+    }
     //w.showFullScreen();
     //QString dat = QString::fromLocal8Bit(BUILDDATE);
     //qDebug() << dat;

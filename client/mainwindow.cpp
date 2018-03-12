@@ -444,6 +444,9 @@ void MainWindow::searchOK(QString section, QString searchTerm) {
 
     if (section == "recipeList") {
         ui->PAGES->setCurrentWidget(ui->SCREEN_PROCESSING);
+        QMediaPlayer mplayProcessing;
+        mplayProcessing.setMedia(QUrl::fromUserInput("qrc:/sounds/processing.mp3"));
+        mplayProcessing.play();
         AnimationClass->TextFlash(ui->PROCESSING_LABEL,1500,-1,0);
         m_webSocket->sendTextMessage("RECIPE_LIST::SELECT `id`,`title`,`thumbnail` FROM recipes WHERE `title` LIKE '%"+searchTerm+"%'");
         processData(searchTerm);
@@ -824,7 +827,11 @@ qDebug() << "loadSettings";
 
     db.close();
 
-    qDebug() << "languageItems" << settingsClass->loadSetting("SELECT `code`,`text` FROM `translation_codes`");
+
+    QString scaleFactor = settingsClass->loadSetting("SELECT `scale_factor` FROM `settings` WHERE id='0';").at(0).at(0);
+    ui->GUI_SCALE_SPINNER->setValue(scaleFactor.toDouble());
+
+    //qDebug() << "languageItems" << settingsClass->loadSetting("SELECT `code`,`text` FROM `translation_codes`");
 
     currentLanguageName = settingsClass->loadSetting("SELECT `text` FROM `translation_codes` WHERE `code` = '"+currentLanguage+"'").at(0).at(0);
 
@@ -1249,6 +1256,29 @@ void MainWindow::listDirVideos(QString dirString) {
 
 void MainWindow::connections() {
 
+    void (QDoubleSpinBox::*mySignal)(double) = &QDoubleSpinBox::valueChanged;
+    connect(ui->GUI_SCALE_SPINNER, mySignal, this, [this](double value){
+        qDebug() << qgetenv("Q_SCALE_FACTOR");
+        QString scaleFactor = QString::number(value);
+        qputenv("Q_SCALE_FACTOR",qPrintable(scaleFactor));
+    });
+
+
+    connect(ui->GUI_SCALE_SPINNER_LEFT,&QPushButton::clicked,[=](){
+       ui->GUI_SCALE_SPINNER->setValue(ui->GUI_SCALE_SPINNER->value()-0.01);
+    });
+
+    connect(ui->GUI_SCALE_SPINNER_RIGHT,&QPushButton::clicked,[=](){
+       ui->GUI_SCALE_SPINNER->setValue(ui->GUI_SCALE_SPINNER->value()+0.01);
+    });
+
+    connect(ui->GUI_SCALE_SPINNER_LEFT,&QPushButton::released,[=](){
+       settingsClass->writeSetting("UPDATE settings SET `scale_factor` = '"+QString::number(ui->GUI_SCALE_SPINNER->value())+"' WHERE `id` = '0';");
+    });
+
+    connect(ui->GUI_SCALE_SPINNER_RIGHT,&QPushButton::released,[=](){
+       settingsClass->writeSetting("UPDATE settings SET `scale_factor` = '"+QString::number(ui->GUI_SCALE_SPINNER->value())+"' WHERE `id` = '0';");
+    });
 
     connect(ui->VIDEO_FILES_LIST,&QListWidget::itemClicked,[=](){
 
@@ -2444,6 +2474,9 @@ void MainWindow::loadRecipe(QVector<QStringList> result) {
     openRecipeBool = false;
     AnimationClass->TextFlash(ui->PROCESSING_LABEL,1500,-1,0);
     ui->PAGES->setCurrentWidget(ui->SCREEN_PROCESSING);
+    QMediaPlayer mplayProcessing;
+    mplayProcessing.setMedia(QUrl::fromUserInput("qrc:/sounds/processing.mp3"));
+    mplayProcessing.play();
     extra_functions::delay(1500);
 
 

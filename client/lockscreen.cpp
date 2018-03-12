@@ -41,7 +41,7 @@ LockScreen::LockScreen(QWidget *parent) :
     menuBeeper = new QMediaPlayer;
     menuBeeper->setVolume(menuBeeperVolume);
     codeButtons= new QVector<QObject*>();
-    ui->BUTTON_ALPHA->setText(
+    /*ui->BUTTON_ALPHA->setText(
                 settings::LOAD(
                     "interface",
                     "LOCKSCREEN/ALPHA/text()")[1].toUpper());
@@ -72,7 +72,7 @@ LockScreen::LockScreen(QWidget *parent) :
     ui->MESSAGE->setText(
                 settings::LOAD(
                     "interface",
-                    "LOCKSCREEN/MESSAGE_LOCKED/text()")[1].toUpper());
+                    "LOCKSCREEN/MESSAGE_LOCKED/text()")[1].toUpper());*/
 }
 
 LockScreen::~LockScreen()
