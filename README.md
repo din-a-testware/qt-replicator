@@ -45,7 +45,7 @@ The server has a command line option to activate a user-input console, where you
 
 I'm using the font "**Helvetica Ultra Compressed**". Sadly it isn't under a free license, so I cannot provide it in this repository, but I'm sure you'll get it by yourself. ;)
 
-Though it is at a good usable stage, much work has to be done. The code in general needs a **big cleanup**. In the future I will switch from QMultimedia to QtAV. QMultimedia is ok, but has not the best performance and liability. The creation of the music database is also not perfect. I'm using the c++ interface from Exiftool, but curiously it doesn't parse the cover art correct.
+Though it is at a good usable stage, much work has to be done. The code in general needs a **big cleanup**. In the future I will switch from QMultimedia to QtAV. QMultimedia is ok, but has not the best performance and reliability. The creation of the music database is also not perfect. I'm using the c++ interface from Exiftool, but curiously it doesn't parse the cover art correct.
 
 A Video will be available soon too.
 
