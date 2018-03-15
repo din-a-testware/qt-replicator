@@ -39,6 +39,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QVector<QTimer *> timerList;
+
     //! LANGUAGE SETTINGS
     QString currentLanguage;
     QString currentLanguageName;
@@ -359,6 +361,12 @@ private Q_SLOTS:
     void widgetsSettings();
 
 private slots:
+
+    //! -- COUNTDOWN TIMER
+    void countdownTimerTimeout(QTimer *newTimer, QString title, QListWidgetItem *currentListItem);
+
+    void setTimerLabel(qint64 mseconds, QString title, QDateTime timeoutDate);
+    //! --------
 
     void changeTitle(QString title);
 
@@ -933,6 +941,8 @@ private slots:
     void on_SET_SERVER_BACK_clicked();
 
     void on_SET_AVAIL_LANG_LIST_itemClicked(QListWidgetItem *item);
+
+    void on_TIMER_LIST_ACTIVE_itemClicked(QListWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;
