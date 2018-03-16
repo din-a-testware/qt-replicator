@@ -13,6 +13,12 @@ An Android-version is also a work-in-progress.
 
 In the build-folder there are prebuild binaries for x64 and raspbian.
 
+And if you like it, you can buy me a cup of Earl Grey or a little ebook or something like that ;)
+
+[![paypal](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8K9FHDF3E76XN)
+
+https://www.amazon.de/hz/wishlist/ls/266KAWC8W2W57?
+
 ***Note when building:*** There are some files in the qresource file, which I did not upload, due to license issues or unnecessity, but I did not have the leisure to update the qrc file yet. So, when the compiler complains about missing files, just delete them from the qrc.
 
 ***And than it has some additional features:***
