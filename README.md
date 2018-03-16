@@ -11,7 +11,7 @@ It's splitted into a server and a client.
 The client gets the recipe data from the server via websockets. The reason for this is, that multiple clients can connect to the server and the server does not have to be installed on the client device.
 An Android-version is also a work-in-progress.
 
-In the build-folder there are prebuild binaries for x64 and raspbian.
+In the ***build***-folder there are prebuild binaries for x64 and raspbian.
 
 And if you like it, you can buy me a cup of Earl Grey or a little ebook or something like that ;)
 
