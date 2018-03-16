@@ -186,6 +186,7 @@ void MainWindow::delegateSettings() {
     ui->VIDEO_FILES_LIST->setItemDelegate(new ListDelegate(ui->VIDEO_FILES_LIST));
     ui->SR_RESULT->setItemDelegate(new listDelegateRecipe(ui->SR_RESULT));
     ui->TIMER_LIST->setItemDelegate(new listdelegateEdge(ui->TIMER_LIST));
+    ui->TIMER_LIST_ACTIVE->setItemDelegate(new listdelegateEdge(ui->TIMER_LIST_ACTIVE));
     ui->RECIPE_Ingredient_list->setItemDelegate(new listdelegateEdge(ui->RECIPE_Ingredient_list));
     ui->MARKED_RECIPES->setItemDelegate(new ListDelegateNotes(ui->MARKED_RECIPES));
     ui->NOTES_LIST->setItemDelegate(new ListDelegateNotes(ui->NOTES_LIST));
@@ -228,6 +229,112 @@ void MainWindow::timerSettings() {
 
     /************************************** </ TIMER RED ALERT > **************************************/
 }
+
+//!! TIMEOUT
+void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWidgetItem *currentListItem=NULL) {
+
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+
+    if (ui->TIMER_LIST_ACTIVE->selectedItems().count()<=0) {
+    }
+
+    if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
+        qDebug() << "ausgewählt" << timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->timerId();
+        qint64 timerTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt();
+        if (newTimer->timerId() == timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->timerId()) {
+
+            QDateTime endTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime();
+
+            if (endTime.msecsTo(currentDateTime)+1000 < timerTime) {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+
+                setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),endTime);
+            } else {
+                Sound_RedAlert->play();
+
+
+
+                    if (!timer->isActive()) {
+                        StopTheRedAlert=false;
+                        timer->start(0);
+                    }
+
+
+
+                newTimer->stop();
+
+
+                foreach (QWidget* q,all_widgets) {
+                     if (q->property("RedAlertState").isValid()) {
+                         q->setProperty("RedAlertState",1);
+                         q->repaint();
+                     }
+                 }
+
+                ui->AW_RED_ALERT_TEXT->setText(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString());
+                ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
+                delete timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt());
+                delete ui->TIMER_LIST_ACTIVE->currentItem();
+            }
+        }
+    } else {
+        qint64 timerTime = currentListItem->data(Qt::UserRole+1).toInt();
+        if (newTimer->timerId() == timerList.at(currentListItem->data(Qt::UserRole).toInt())->timerId()) {
+            QDateTime endTime = currentListItem->data(Qt::UserRole+2).toDateTime();
+            if (endTime.msecsTo(currentDateTime)+1000 < timerTime) {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                qDebug() << currentListItem->data(Qt::DisplayRole).toString()<< ":" << asdf;
+            } else {
+                Sound_RedAlert->play();
+
+
+                    if (!timer->isActive()) {
+                        StopTheRedAlert=false;
+                        timer->start(0);
+                    }
+
+                newTimer->stop();
+
+
+                foreach (QWidget* q,all_widgets) {
+                     if (q->property("RedAlertState").isValid()) {
+                         q->setProperty("RedAlertState",1);
+                         q->repaint();
+                     }
+                 }
+                ui->AW_RED_ALERT_TEXT->setText(currentListItem->data(Qt::DisplayRole).toString());
+                ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
+
+                delete timerList.at(currentListItem->data(Qt::UserRole).toInt());
+                delete currentListItem;
+            }
+        }
+    }
+}
+
+//!! SET TIMER LABEL
+void MainWindow::setTimerLabel(qint64 mseconds, QString title, QDateTime timeoutDate) {
+
+    if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
+        if (timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->isActive() == false) {
+            ui->TIMER_PAUSE->setText("WEITER");
+        } else {
+            ui->TIMER_PAUSE->setText("PAUSE");
+        }
+        ui->TIMER_ACTIVE_HH->setText(QDateTime::fromTime_t(mseconds/1000).toUTC().toString("hh"));
+        ui->TIMER_ACTIVE_MM->setText(QDateTime::fromTime_t(mseconds/1000).toUTC().toString("mm"));
+        ui->TIMER_ACTIVE_SS->setText(QDateTime::fromTime_t(mseconds/1000).toUTC().toString("ss"));
+        ui->TIMER_NAME->setText(title);
+
+        QDateTime timeoutTime = QDateTime::currentDateTime();
+        timeoutTime.addMSecs(mseconds);
+        QString timeoutLabel = timeoutDate.toString("hh:mm:ss");
+        ui->TIMER_TIMEOUT_TIME->setText(timeoutLabel);
+    }
+}
+
+
+
 
 void MainWindow::mediaSettings() {
 
@@ -1261,6 +1368,19 @@ void MainWindow::connections() {
         qDebug() << qgetenv("Q_SCALE_FACTOR");
         QString scaleFactor = QString::number(value);
         qputenv("Q_SCALE_FACTOR",qPrintable(scaleFactor));
+    });
+
+
+    connect(ui->TIMER_BUTTON_ACTIVE,&QPushButton::clicked,[=](){
+       ui->TIMER_TAB->setCurrentWidget(ui->TIMER_ACTIVE);
+       ui->TIMER_BUTTON_ACTIVE->setProperty("Edge_Left_Color","#cc6666");
+       ui->TIMER_BUTTON_PRESETS->setProperty("Edge_Left_Color","#ff9900");
+    });
+
+    connect(ui->TIMER_BUTTON_PRESETS,&QPushButton::clicked,[=](){
+       ui->TIMER_TAB->setCurrentWidget(ui->TIMER_PRESETS);
+       ui->TIMER_BUTTON_ACTIVE->setProperty("Edge_Left_Color","#ff9900");
+       ui->TIMER_BUTTON_PRESETS->setProperty("Edge_Left_Color","#cc6666");
     });
 
 
@@ -2705,22 +2825,78 @@ void MainWindow::on_TIMER_RESET_clicked()
 
 void MainWindow::on_TIMER_START_clicked()
 {
-    redActive=true;
+
+   // redActive=true;
+
+    StopTheRedAlert=false;
+
+    last_widget = ui->PAGES->currentWidget();
+
+    //! NEW TIMER
+    QTimer *newTimer = new QTimer(this);
+    newTimer->setInterval(500);
+    //! -------------
+
+    //! DEFINE TIMER LIST ID AND ADD TO TIMER LIST
+    int lastID = timerList.count();
+    timerList.insert(lastID,newTimer);
+    //! -------------
+
+    //! GET TIMERMSECS
+
+    int timerMsecs = (ui->ALARM_SPINNER_S->value()*1000)+
+                     (ui->ALARM_SPINNER_M->value()*60*1000)+
+                     (ui->ALARM_SPINNER_H->value()*60*60*1000);
+
+    //! -------------
+
+    //! END TIME
+    QDateTime endTime = QDateTime::currentDateTime();
+              endTime.addMSecs(timerMsecs);
+    //! -------------
+
+    //! ROLES
+    QString titleString = ui->TIMER_NAME_EDIT->text();
+    //! -------------
+
+    //! NEW LISTWIDGET ITEM FOR ACTIVE LIST
+    QListWidgetItem *newTimerItem = new QListWidgetItem();
+    newTimerItem->setData(Qt::DisplayRole,titleString);
+    newTimerItem->setData(Qt::UserRole,lastID);                     //!! USER ROLE: ID IN TIMERLIST
+    newTimerItem->setData(Qt::UserRole+1,timerMsecs);               //!! USER ROLE+1: INITIAL TIMER MSECS
+    newTimerItem->setData(Qt::UserRole+2, endTime);                 //!! USER ROLE+2: INITIAL ENDTIME
+    ui->TIMER_LIST_ACTIVE->addItem(newTimerItem);
+    //! -------------
+
+    //! CONNECTION COUNTDOWN
+    connect(newTimer,&QTimer::timeout,[=]() {
+
+        countdownTimerTimeout(newTimer, titleString, newTimerItem);
+
+    });
+    //! -------------
+
+    timerList.at(lastID)->start();
+
+
+
+
+
     //!*qDebug() << "mainwindow" << redActive;
 
-    if (!timer->isActive()) {
+/*!    if (!timer->isActive()) {
     StopTheRedAlert=false;
     ui->TIMER_NAME->setText(ui->TIMER_NAME_EDIT->text());
     //timer->start();
     //timer_countdown->start(2000);
-
+*/
     /*foreach (QWidget* q,all_widgets) {
         if (q->property("css_red").isValid()) {
             q->setStyleSheet(q->property("css_red").toString());
         }
     }*/
     //red_alert_class::RedAlertFlash(red_alert_widgets,all_widgets);
-    timercntdown = (ui->ALARM_SPINNER_H->value()*60*60*1000) + (ui->ALARM_SPINNER_M->value()*60*1000) + (ui->ALARM_SPINNER_S->value()*1000);
+/*!    timercntdown = (ui->ALARM_SPINNER_H->value()*60*60*1000) + (ui->ALARM_SPINNER_M->value()*60*1000) + (ui->ALARM_SPINNER_S->value()*1000);
     QTime t = QTime::currentTime();
     //out << t.toString("hh:mm:ss") << " -> ";
     QTime t2 = t.addSecs((ui->ALARM_SPINNER_H->value()*60*60) + (ui->ALARM_SPINNER_M->value()*60) + (ui->ALARM_SPINNER_S->value()));
@@ -2733,21 +2909,21 @@ void MainWindow::on_TIMER_START_clicked()
     extra_functions::delay(timercntdown);
     last_widget = ui->PAGES->currentWidget();
     //extra_functions::delay(10);
-
+*/
     /*QMovie *redAlertAnim = new QMovie(":/images/red_alert.gif");
     ui->AW_REDALERT_LABEL->setMovie(redAlertAnim);
     ui->AW_REDALERT_LABEL->setScaledContents(true);
     redAlertAnim->start();*/
-    timer->start(0);
+/*!    timer->start(0);
 
     ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
 
    foreach (QWidget* q,all_widgets) {
-
+*/
         /*if (q->property("css_red").isValid()) {
             q->setStyleSheet(q->property("css_red").toString());
         }*/
-        if (q->property("RedAlertState").isValid()) {
+/*!        if (q->property("RedAlertState").isValid()) {
             q->setProperty("RedAlertState",1);
             q->repaint();
 
@@ -2761,7 +2937,7 @@ void MainWindow::on_TIMER_START_clicked()
 
     //red_alert_class::RedAlertFlash(red_alert_widgets,all_widgets,true);
 
-
+*/
 }
 
 void MainWindow::on_SR_DIS_RETRY_clicked()
@@ -2813,6 +2989,17 @@ void MainWindow::on_SYSTEM_SETTINGS_BUTTON_clicked()
 void MainWindow::on_TIMER_STOP_clicked()
 {
 
+    if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
+        timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->stop();
+        setTimerLabel(0,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),  ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime());
+        delete timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt());
+        delete ui->TIMER_LIST_ACTIVE->currentItem();
+        StopTheRedAlert=true;
+        Sound_RedAlert->stop();
+    }
+
+
+    /*
     if (timer_countdown->isActive()) {
         timer_countdown->stop();
         ui->TIMER_ACTIVE_HH->setText("00");
@@ -2822,7 +3009,7 @@ void MainWindow::on_TIMER_STOP_clicked()
     }
     StopTheRedAlert=true;
     Sound_RedAlert->stop();
-
+*/
 }
 
 void MainWindow::endAlert() {
@@ -3055,7 +3242,46 @@ void MainWindow::on_TIMER_PAUSE_clicked()
 {
 //redActive=false;
 
-    ui->TOP_Left_border_bottom->setProperty("RedAlertState",1);
+    //ui->TOP_Left_border_bottom->setProperty("RedAlertState",1);
+
+    if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
+
+        QDateTime currentDateTime = QDateTime::currentDateTime();
+        qint64 timerTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt();
+
+        if (timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->isActive() == false) {
+            ui->TIMER_PAUSE->setText("PAUSE");
+            int timerMsecs = (ui->ALARM_SPINNER_S->value()*1000)+
+                             (ui->ALARM_SPINNER_M->value()*60*1000)+
+                             (ui->ALARM_SPINNER_H->value()*60*60*1000);
+
+            qint64 currentDateMsecs = QDateTime::currentMSecsSinceEpoch();
+            QDateTime endTime = QDateTime::currentDateTime();
+                      endTime.addMSecs(timerMsecs);
+            qDebug() << "currentDateMsecs" << currentDateMsecs << "endtime" << currentDateMsecs + timerMsecs << "diff" << (currentDateMsecs+timerMsecs)-currentDateMsecs;
+
+            ui->TIMER_LIST_ACTIVE->currentItem()->setData(Qt::UserRole+2, endTime);
+            if (((currentDateMsecs+timerMsecs)-currentDateMsecs) != ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt()) {
+                timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->blockSignals(false);
+                timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->start();
+            }
+        } else {
+            ui->TIMER_PAUSE->setText("WEITER");
+            timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->stop();
+            timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->blockSignals(true);
+
+            QDateTime endTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime();
+            qDebug() << "pause:"<< timerTime-(endTime.msecsTo(currentDateTime));
+
+            timerTime = timerTime-(endTime.msecsTo(currentDateTime));
+            ui->TIMER_LIST_ACTIVE->currentItem()->setData(Qt::UserRole+1,timerTime);
+            endTime.addMSecs(timerTime);
+            ui->TIMER_LIST_ACTIVE->currentItem()->setData(Qt::UserRole+2,endTime);
+
+        }
+
+    }
+
 }
 
 void MainWindow::window_shown() {
@@ -5854,4 +6080,34 @@ void MainWindow::on_SET_AVAIL_LANG_LIST_itemClicked(QListWidgetItem *item)
     settingsClass->writeSetting("UPDATE translation_codes SET `selected` = '0';");
     settingsClass->writeSetting("UPDATE translation_codes SET `selected` = '1' WHERE `code` = '"+currentLanguage+"';");
     loadSettings(currentLanguage);
+}
+
+void MainWindow::on_TIMER_LIST_ACTIVE_itemClicked(QListWidgetItem *item)
+{
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    qint64 timerTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt();
+
+    if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
+
+
+            QDateTime endTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime();
+
+            if (timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->isActive()) {
+            if (endTime.msecsTo(currentDateTime) < timerTime) {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                qDebug() << timerTime-(endTime.msecsTo(currentDateTime));
+                setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString()+":"+QString::number(timerTime-(endTime.msecsTo(currentDateTime))),endTime);
+            } else {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->stop();
+
+                setTimerLabel(0,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),endTime);
+            }
+            } else {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),endTime);
+            }
+    }
+
+    //ui->lineEdit->setText(item->data(Qt::DisplayRole).toString());
 }
