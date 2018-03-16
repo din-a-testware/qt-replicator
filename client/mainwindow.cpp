@@ -186,6 +186,7 @@ void MainWindow::delegateSettings() {
     ui->VIDEO_FILES_LIST->setItemDelegate(new ListDelegate(ui->VIDEO_FILES_LIST));
     ui->SR_RESULT->setItemDelegate(new listDelegateRecipe(ui->SR_RESULT));
     ui->TIMER_LIST->setItemDelegate(new listdelegateEdge(ui->TIMER_LIST));
+    ui->TIMER_LIST_ACTIVE->setItemDelegate(new listdelegateEdge(ui->TIMER_LIST_ACTIVE));
     ui->RECIPE_Ingredient_list->setItemDelegate(new listdelegateEdge(ui->RECIPE_Ingredient_list));
     ui->MARKED_RECIPES->setItemDelegate(new ListDelegateNotes(ui->MARKED_RECIPES));
     ui->NOTES_LIST->setItemDelegate(new ListDelegateNotes(ui->NOTES_LIST));
@@ -244,12 +245,32 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
 
             QDateTime endTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime();
 
-            if (endTime.msecsTo(currentDateTime)+999 < timerTime) {
+            if (endTime.msecsTo(currentDateTime)+1000 < timerTime) {
                 qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
 
                 setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),endTime);
             } else {
+                Sound_RedAlert->play();
+
+
+
+                    if (!timer->isActive()) {
+                        StopTheRedAlert=false;
+                        timer->start(0);
+                    }
+
+
+
                 newTimer->stop();
+
+
+                foreach (QWidget* q,all_widgets) {
+                     if (q->property("RedAlertState").isValid()) {
+                         q->setProperty("RedAlertState",1);
+                         q->repaint();
+                     }
+                 }
+
                 ui->AW_RED_ALERT_TEXT->setText(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString());
                 ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
                 delete timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt());
@@ -264,8 +285,23 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
                 qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
                 qDebug() << currentListItem->data(Qt::DisplayRole).toString()<< ":" << asdf;
             } else {
+                Sound_RedAlert->play();
+
+
+                    if (!timer->isActive()) {
+                        StopTheRedAlert=false;
+                        timer->start(0);
+                    }
+
                 newTimer->stop();
 
+
+                foreach (QWidget* q,all_widgets) {
+                     if (q->property("RedAlertState").isValid()) {
+                         q->setProperty("RedAlertState",1);
+                         q->repaint();
+                     }
+                 }
                 ui->AW_RED_ALERT_TEXT->setText(currentListItem->data(Qt::DisplayRole).toString());
                 ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
 
@@ -2791,6 +2827,10 @@ void MainWindow::on_TIMER_START_clicked()
 {
 
    // redActive=true;
+
+    StopTheRedAlert=false;
+
+    last_widget = ui->PAGES->currentWidget();
 
     //! NEW TIMER
     QTimer *newTimer = new QTimer(this);
