@@ -11,6 +11,8 @@ It's splitted into a server and a client.
 The client gets the recipe data from the server via websockets. The reason for this is, that multiple clients can connect to the server and the server does not have to be installed on the client device.
 An Android-version is also a work-in-progress.
 
+In the build-folder there are prebuild binaries for x64 and raspbian.
+
 ***Note when building:*** There are some files in the qresource file, which I did not upload, due to license issues or unnecessity, but I did not have the leisure to update the qrc file yet. So, when the compiler complains about missing files, just delete them from the qrc.
 
 ***And than it has some additional features:***
