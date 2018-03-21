@@ -19,6 +19,8 @@ And if you like it, you can buy me a cup of Earl Grey or a little ebook or somet
 
 https://www.amazon.de/hz/wishlist/ls/266KAWC8W2W57?
 
+***General notes:*** I've restructured the Music-Database, so the internal creation of the database does not work right now. I will fix it soon.
+
 ***Note when building:*** There are some files in the qresource file, which I did not upload, due to license issues or unnecessity, but I did not have the leisure to update the qrc file yet. So, when the compiler complains about missing files, just delete them from the qrc.
 
 ***And than it has some additional features:***
