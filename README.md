@@ -55,11 +55,12 @@ I'm using the font "**Helvetica Ultra Compressed**". Sadly it isn't under a free
 
 Though it is at a good usable stage, much work has to be done. The code in general needs a **big cleanup**. In the future I will switch from QMultimedia to QtAV. QMultimedia is ok, but has not the best performance and reliability. The creation of the music database is also not perfect. I'm using the c++ interface from Exiftool, but curiously it doesn't parse the cover art correct.
 
-A Video will be available soon too.
-
 So far, have fun with it. :)
 
-And now some screenshots:
+And now some screenshots and a video:
+
+[![Youtube video](http://img.youtube.com/vi/p8D_BUBRod4/0.jpg)](http://www.youtube.com/watch?v=p8D_BUBRod4)
+
 ![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_database1.png "Music Database Folders")
 ![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_database2.png "Music Database Artists")
 ![alt text](https://raw.githubusercontent.com/din-a-testware/qt-replicator/master/screenshots/media_start.png "Media Tab")
