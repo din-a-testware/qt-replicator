@@ -245,7 +245,7 @@ QStringList musicdb_control::getMetadata(QString selected_Titles) {
      if(db.open()) {}
      else {};
 
-                 QSqlQuery query("SELECT DISTINCT `artist`,`album`,`title`,`coverart` FROM music WHERE `id` = '"+selected_Titles+"' COLLATE NOCASE");
+                 QSqlQuery query("SELECT DISTINCT `artist`,`album`,`title`,`track` FROM music WHERE `id` = '"+selected_Titles+"' COLLATE NOCASE");
                  if (query.lastError().isValid()){};
                  query.exec();
 
@@ -266,16 +266,39 @@ QStringList musicdb_control::getMetadata(QString selected_Titles) {
                      else { title=query.value(2).toString(); }
 
                      if (query.value(3)=="") { coverart=""; }
-                     else { coverart=query.value(3).toString(); }
-
-                     returnList.append(artist);
-                     returnList.append(album);
-                     returnList.append(title);
-                     returnList.append(coverart);
-
-
-
+                     else {
+                         /*QByteArray b;
+                         b = query.value(3).toByteArray();
+                         coverart=b.toBase64();*/
                      }
+
+
+                     QSqlQuery queryPicture("SELECT picture FROM coverart WHERE id ='"+selected_Titles+"'");
+                                      qDebug() << "pic:" << "SELECT picture FROM coverart WHERE id ='"<<selected_Titles<<"'";
+                                      if (queryPicture.lastError().isValid()){};
+                                      queryPicture.exec();
+
+                                      while (queryPicture.next()) {
+
+                                          if (queryPicture.value(0)=="") { coverart=""; }
+                                          else {
+                                              QByteArray b;
+                                              b = queryPicture.value(0).toByteArray();
+                                              coverart=b.toBase64();
+                                          }
+
+                                      }
+
+                        qDebug() << artist << album << title << "hier";
+                        returnList.append(artist);
+                        returnList.append(album);
+                        returnList.append(title);
+                        returnList.append(coverart);
+                     }
+
+
+
+
                  query.clear();
 
     db.close();

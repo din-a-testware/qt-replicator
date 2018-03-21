@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
         }
 
     }
+
+    scaleFacor = 1;
+
     qputenv("QT_SCALE_FACTOR", qPrintable(scaleFacor));
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); //HiDPI pixmaps
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
     if (QDir::homePath() == "/home/pi" || QDir::homePath() == "/root") {
         w.showFullScreen();
     } else {
-        w.showFullScreen();
+        w.show();
     }
     //w.showFullScreen();
     //QString dat = QString::fromLocal8Bit(BUILDDATE);

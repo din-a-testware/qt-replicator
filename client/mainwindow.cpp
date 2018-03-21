@@ -273,6 +273,7 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
 
                 ui->AW_RED_ALERT_TEXT->setText(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString());
                 ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
+                ui->TIMER_BUTTON_ACTIVE->setProperty("Text_Left",QString::number(ui->TIMER_LIST_ACTIVE->count()-1));
                 delete timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt());
                 delete ui->TIMER_LIST_ACTIVE->currentItem();
             }
@@ -304,7 +305,7 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
                  }
                 ui->AW_RED_ALERT_TEXT->setText(currentListItem->data(Qt::DisplayRole).toString());
                 ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
-
+                ui->TIMER_BUTTON_ACTIVE->setProperty("Text_Left",QString::number(ui->TIMER_LIST_ACTIVE->count()-1));
                 delete timerList.at(currentListItem->data(Qt::UserRole).toInt());
                 delete currentListItem;
             }
@@ -328,7 +329,7 @@ void MainWindow::setTimerLabel(qint64 mseconds, QString title, QDateTime timeout
 
         QDateTime timeoutTime = QDateTime::currentDateTime();
         timeoutTime.addMSecs(mseconds);
-        QString timeoutLabel = timeoutDate.toString("hh:mm:ss");
+        QString timeoutLabel = timeoutTime.toString("hh:mm:ss");
         ui->TIMER_TIMEOUT_TIME->setText(timeoutLabel);
     }
 }
@@ -931,7 +932,7 @@ qDebug() << "loadSettings";
 
 
          }
-
+    ui->TIMER_BUTTON_PRESETS->setProperty("Text_Left",QString::number(ui->TIMER_LIST->count()));
     db.close();
 
 
@@ -2828,6 +2829,8 @@ void MainWindow::on_TIMER_START_clicked()
 
    // redActive=true;
 
+    ui->TIMER_BUTTON_ACTIVE->setProperty("Text_Left",QString::number(ui->TIMER_LIST_ACTIVE->count()+1));
+
     StopTheRedAlert=false;
 
     last_widget = ui->PAGES->currentWidget();
@@ -2992,6 +2995,7 @@ void MainWindow::on_TIMER_STOP_clicked()
     if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
         timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->stop();
         setTimerLabel(0,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),  ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime());
+        ui->TIMER_BUTTON_ACTIVE->setProperty("Text_Left",QString::number(ui->TIMER_LIST_ACTIVE->count()-1));
         delete timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt());
         delete ui->TIMER_LIST_ACTIVE->currentItem();
         StopTheRedAlert=true;
@@ -3137,7 +3141,7 @@ void MainWindow::on_TIMER_SAVE_clicked()
         }
     else {};
     db.close();
-
+    ui->TIMER_BUTTON_PRESETS->setProperty("Text_Left",QString::number(ui->TIMER_LIST->count()));
     ui->TIMER_LIST->currentItem()->setData(Qt::DisplayRole,ui->TIMER_NAME_EDIT->text());
     ui->TIMER_LIST->currentItem()->setData(Qt::UserRole+1,QString::number(ui->ALARM_SPINNER_H->value()));
     ui->TIMER_LIST->currentItem()->setData(Qt::UserRole+2,QString::number(ui->ALARM_SPINNER_M->value()));
@@ -3157,6 +3161,7 @@ void MainWindow::on_TIMER_DELETE_clicked()
          query.exec();
     }
 
+    ui->TIMER_BUTTON_PRESETS->setProperty("Text_Left",QString::number(ui->TIMER_LIST->count()-1));
     delete(ui->TIMER_LIST->currentItem());
 }
 

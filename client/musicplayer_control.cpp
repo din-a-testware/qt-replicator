@@ -20,6 +20,7 @@
 #include "listdelegate.h"
 #include "musicdb_control.h"
 #include "globalvars.h"
+#include "ExifTool.h"
 
 static qreal getPeakValue(const QAudioFormat &format);
 static QVector<qreal> getBufferLevels(const QAudioBuffer &buffer);
@@ -211,19 +212,19 @@ QString MusicPlayer_Control::getTag(QString fileName,QString tagType) {
     //!TagLib::ID3v2::Tag *tag = ffile.ID3v2Tag();
 
     if (tagType=="artist") {
-//!        return tag->artist().toCString();
+    //!        return tag->artist().toCString();
     }
 
     else if (tagType=="album") {
-//!        return tag->album().toCString();
+    //!        return tag->album().toCString();
     }
 
     else if (tagType=="track") {
-//!        return QString::number(tag->track());
+    //!        return QString::number(tag->track());
     }
 
     else if (tagType=="title") {
-//!        return tag->title().toCString();
+    //!        return tag->title().toCString();
     }
 
     else if (tagType=="image") {
@@ -247,17 +248,72 @@ void MusicPlayer_Control::updateTags(QString fileName) {
 
         // ##### CHECK IF FILENAME IS HTTP STREAM
         if (fileName.contains("http://")) {
+
+            QStringList dbTags = musicDB_control->getMetadata(playlist_list->currentItem()->data(Qt::UserRole-1).toString());
+
+            artist_label->setText(dbTags.at(0));
+            /*
             artist_label->setText(fileName.remove("http://"));
             title_label->setText(fileName.remove("http://"));
-            album_label->setText("");
+            album_label->setText("Radio");*/
+
+            album_label->setText(dbTags.at(1));
+
+            title_label->setText(dbTags.at(2));
+
+
+            QString coverArtLocal = dbTags.at(3);
+            qDebug() << dbTags.at(3);
+            qDebug() << "1";
+            QString bild = coverArtLocal;
+            QByteArray base64Data = bild.toStdString().c_str();
+            QImage image;
+            image.loadFromData(QByteArray::fromBase64(base64Data));
+            // QImage resized = image->scaled(480,332,Qt::KeepAspectRatio);
+            if (image.loadFromData(QByteArray::fromBase64(base64Data)) == false) {
+                cover_art->setPixmap(QPixmap::fromImage(QImage(":/images/UFP-Logo_even.png")));
+            } else {
+            QImage ResizedImage =
+                image.scaled(200, 200, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                cover_art->setPixmap(QPixmap::fromImage(ResizedImage));
+            }
+
         }
+
+
+
+
+
+                QStringList dbTags = musicDB_control->getMetadata(playlist_list->currentItem()->data(Qt::UserRole-1).toString());
+
+                artist_label->setText(dbTags.at(0));
+
+                album_label->setText(dbTags.at(1));
+
+                title_label->setText(dbTags.at(2));
+
+                QString coverArtLocal = dbTags.at(3);
+                QString bild = coverArtLocal;
+                QByteArray base64Data = bild.toStdString().c_str();
+                QImage image;
+                image.loadFromData(QByteArray::fromBase64(base64Data)/*, "PNG"*/);
+                // QImage resized = image->scaled(480,332,Qt::KeepAspectRatio);
+                if (image.loadFromData(QByteArray::fromBase64(base64Data)/*, "PNG"*/) == false) {
+                    cover_art->setPixmap(QPixmap::fromImage(QImage(":/images/UFP-Logo_even.png")));
+                } else {
+                QImage ResizedImage =
+                    image.scaled(200, 200, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                    cover_art->setPixmap(QPixmap::fromImage(ResizedImage));
+                }
+
+            }
+
+
 
         // ##### ELSE IT SHOULD BE A LOCAL FILE
         else {
 
             QStringList dbTags = musicDB_control->getMetadata(playlist_list->currentItem()->data(Qt::UserRole-1).toString());
-
-//qDebug() << "MPC:" << dbTags;
 
             artist_label->setText(dbTags.at(0));
 
@@ -265,43 +321,23 @@ void MusicPlayer_Control::updateTags(QString fileName) {
 
             title_label->setText(dbTags.at(2));
 
-            //cover_art->setText(dbTags.at(3));
-            // ##### INITIALIZE TAGLIB
-/*!            TagLib::MPEG::File ffile(fileName.toStdString().c_str());
-            TagLib::ID3v2::Tag *tag = ffile.ID3v2Tag();
-            TagLib::ID3v2::FrameList l = tag->frameList("APIC");*/
-
-
-            // ##### THAT'S FOR THE COVER ART
-            //QImage image;
-
-            /*!if(l.isEmpty()) {
-
-                // ##### IF TAG HAS NO COVER ART SET PLACEHOLDER FOR THE IMAGE
-                cover_art->setPixmap(QPixmap(":/images/UFP-Logo_even.png"));
-            }
-            else {
-
-                // ##### CREATE COVER ART
-
-                TagLib::ID3v2::AttachedPictureFrame *f =
-                static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l.front());
-                image.loadFromData((const uchar *) f->picture().data(), f->picture().size());
-                cover_art->setPixmap(QPixmap::fromImage(image));
-            }*/
-
-            QString bild = dbTags.at(3);
+            QString coverArtLocal = dbTags.at(3);
+            qDebug() << dbTags.at(3);
+            QString bild = coverArtLocal;
             QByteArray base64Data = bild.toStdString().c_str();
             QImage image;
-            image.loadFromData(QByteArray::fromBase64(base64Data)/*, "PNG"*/);
+            image.loadFromData(QByteArray::fromBase64(base64Data));
             // QImage resized = image->scaled(480,332,Qt::KeepAspectRatio);
-            if (image.loadFromData(QByteArray::fromBase64(base64Data)/*, "PNG"*/) == false) {
+            if (image.loadFromData(QByteArray::fromBase64(base64Data)) == false) {
                 cover_art->setPixmap(QPixmap::fromImage(QImage(":/images/UFP-Logo_even.png")));
             } else {
             QImage ResizedImage =
                 image.scaled(200, 200, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
                 cover_art->setPixmap(QPixmap::fromImage(ResizedImage));
             }
+    }
+
+
 
 
         // ##### DURATION LABEL
@@ -314,9 +350,9 @@ void MusicPlayer_Control::updateTags(QString fileName) {
         title_label->setText(tag->title().toCString());
         album_label->setText(tag->album().toCString());*/
 }
-    }
 
-}
+
+
 
 void MusicPlayer_Control::playMusic(QStringList *mediaFiles) {
 
@@ -343,7 +379,9 @@ void MusicPlayer_Control::playMusic(QStringList *mediaFiles) {
             item->setData(Qt::UserRole + 1, QString::number(musicPlaylist->mediaCount()-1));
             item->setData(Qt::UserRole + 2, getTag(mediaFiles->at(i),"track"));
             item->setData(Qt::UserRole + 3, fullFilePath);
+            //item->setData(Qt::UserRole + 4, );
             playlist_list->addItem(item);
+            //!!-------------------------------------------------------------------------------------------------
         }
 
         // ##### CHECK IF PLAYER IS PLAYING; IF NOT, PLAY!

@@ -5,12 +5,18 @@
 #-------------------------------------------------
 
 QT       += core gui websockets xml network multimedia xmlpatterns multimediawidgets network
-QT += sql
+QT       += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = replicator-client
 TEMPLATE = app
 #Release:DEFINES += QT_NO_DEBUG_OUTPUT
+
+VERSION = 1.0.0.1
+QMAKE_TARGET_COMPANY = din-a-testware
+QMAKE_TARGET_PRODUCT = replicator
+QMAKE_TARGET_DESCRIPTION = replication machine
+QMAKE_TARGET_COPYRIGHT = din-a-testware
 
 #target.path = /usr/local/bin/
 target.path = /home/pi/bin/
@@ -22,14 +28,6 @@ INSTALLS += target
 # deprecated API in order to know how to port your code away from it.
 DEFINES -= QT_DEPRECATED_WARNINGS
 DEFINES -= -WUnused-parameter
-
-#DEFINES+="BUILDNUMBER=12345"
-
-#DEFINES += QT_NO_DEBUG_OUTPUT
-
-#DEFINES += "BUILDDATE=system(date -R)"
-
-#QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -103,22 +101,6 @@ RESOURCES += \
     resources.qrc
 
 CONFIG += c++11
-
-##!####LIBS += -ltag
-
-#STATECHARTS += \
-#    current_state.scxml
-
-#DISTFILES += \
-#    app_model.qmodel \
-#    mainwindow_model.qmodel \
-#    lockscreen_model.qmodel
-
-#LIBS       += -lVLCQtCore -lVLCQtWidgets #-lVLCCore
-
-#INCLUDEPATH += /home/ankalagon/bin/build/vlc-qt/build/include/
-
-#LIBS -= -leglfasdfs
 
 DISTFILES += \
     cleanup.sh \
