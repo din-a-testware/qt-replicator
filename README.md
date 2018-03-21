@@ -32,7 +32,7 @@ https://www.amazon.de/hz/wishlist/ls/266KAWC8W2W57?
 
 **Mark recipes**: You can mark the recipes you like or want to use in the (near) future.
 
-**Timer**: Countdown timer, so you don't have to look at the clock. When it has timed out, the red alert will start. Presets are also available.
+**Timer**: Countdown timer, so you don't have to look at the clock. When it has timed out, the red alert will start. Presets are also available. There can be run multiple timers at the same time.
 
 **Ambient sounds**: Maybe you like to have an ambient warpcore-sound, so it can be enabled. You can also add your own sounds too.
 Lock system: opens a form where you have to pass a code with the four buttons. At the moment it is hardcodes alpha-beta-gamma-delta but as soon as possible I will add the function to change it in the system settings menu.
