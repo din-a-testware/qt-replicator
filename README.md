@@ -7,7 +7,7 @@ The project name is obvious.
 Despite of that it can be ported to severals platforms (thanks to Qt) it's mainly made for the raspberry Pi with it's official touchscreen.
 It's written in Qt 5.10. A prebuild cross-compile-toolchain will be available soon and as well a working raspbian jessie image with the replicator preinstalled.
 
-It's splitted into a server and a client.
+It's splitted into a server, a client and a recipe-editor.
 The client gets the recipe data from the server via websockets. The reason for this is, that multiple clients can connect to the server and the server does not have to be installed on the client device.
 An Android-version is also a work-in-progress.
 
