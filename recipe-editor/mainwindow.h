@@ -74,6 +74,10 @@ private slots:
 
         void on_pushButton_10_clicked();
 
+        void on_closeApp_clicked();
+
+        void delay(int millisecondsToWait);
+
 private:
     Ui::MainWindow *ui;
 };

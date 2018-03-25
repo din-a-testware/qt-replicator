@@ -76,12 +76,62 @@ MainWindow::MainWindow(QWidget *parent) :
         });
         pingTimer->setInterval(1000);
         pingTimer->start();
+
+
+
+        {
+            delay(1000);
+            QString sql = "SELECT `id`,`title` FROM recipes";
+
+            if (ui->useLocalFile->isChecked() == true) {
+
+                db.setDatabaseName(local_DB);
+                if(db.open()){
+                    QSqlQuery query(QSqlDatabase::database("recipeDB",true));
+                    query.prepare(sql);
+
+                    QVector<QStringList> returnList;
+                    query.prepare(sql);
+                    if (query.lastError().isValid()) {} else {qDebug()<<query.lastError().text();};
+                    query.exec();
+                    while (query.next()) {
+
+                        QStringList queryResultRow;
+
+                        for (int i=0; i<query.record().count();i++) {
+                           queryResultRow.append(query.value(i).toString());
+                        }
+
+                        returnList.append(queryResultRow);
+
+                        }
+                    populateRecipeList(returnList);
+
+                } else {
+
+                }
+                db.close();
+
+            } else {
+                m_webSocket->sendTextMessage("RECIPE_LIST::"+sql);
+            }
+        }
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::delay(int millisecondsToWait)
+{
+    QEventLoop loop;
+    QTimer t;
+    t.connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
+    t.start(millisecondsToWait);
+    loop.exec();
+}
+
 
 void MainWindow::on_pushButton_6_clicked()
 {
@@ -637,4 +687,9 @@ void MainWindow::on_pushButton_10_clicked()
     settings.setValue("serverPath",ui->server_path->text());
     settings.setValue("local_DB",ui->local_DB->text());
     settings.setValue("useLocalDB",ui->useLocalFile->isChecked());
+}
+
+void MainWindow::on_closeApp_clicked()
+{
+    QApplication::quit();
 }

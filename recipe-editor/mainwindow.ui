@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabs">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_list">
        <attribute name="title">
@@ -468,6 +468,13 @@
          <widget class="QPushButton" name="server_shutdown">
           <property name="text">
            <string>Shutdown Server</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="3">
+         <widget class="QPushButton" name="closeApp">
+          <property name="text">
+           <string>Exit</string>
           </property>
          </widget>
         </item>
