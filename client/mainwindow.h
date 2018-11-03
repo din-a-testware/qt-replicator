@@ -19,13 +19,28 @@
 #include <QSqlDatabase>
 #include "videofullscreen.h"
 #include "settings.h"
+#include <QTextToSpeech>
 
+#include "remote_control.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QList>
+#include <QtCore/QByteArray>
+#include <QtNetwork/QSslError>
+//#include "globalvars.h"
+//#include "db_search.h"
+#include <QAction>
+
+class remote_control;
 class VideoPlayer_Control;
 class MusicPlayer_Control;
 class animations;
 class musicdb_control;
 class VideoFullscreen;
 class settings;
+
+QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
+QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
 namespace Ui {
 class MainWindow;
@@ -36,8 +51,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit MainWindow(quint16 port,QWidget *parent = 0);
+    virtual ~MainWindow();
+
+    QAction *exitAct;
 
     QVector<QTimer *> timerList;
 
@@ -277,6 +294,9 @@ public:
     MusicPlayer_Control *MusicPlayerClass = new MusicPlayer_Control;
     animations *AnimationClass = new animations;
 
+    remote_control *Remote_Control = new remote_control;
+
+
     QStringList MusicPlaylistEntries;
     QString selected_folder;
     QString selected_folder_real;
@@ -334,6 +354,8 @@ public:
     QList<QMediaPlayer *> ambientSounds;
     //QList<QMediaPlaylist *> ambientSoundsPlaylist;
 
+    QTextToSpeech *m_speech;
+
 protected:
     void showEvent(QShowEvent *event);
 
@@ -359,6 +381,16 @@ private Q_SLOTS:
     void delegateSettings();
     void codeSettings();
     void widgetsSettings();
+
+    void onNewConnection();
+    void processTextMessage(QString message);
+    void processBinaryMessage(QByteArray message);
+    void socketDisconnected();
+    void onSslErrors(const QList<QSslError> &errors);
+    QByteArray serialize(QVector<QStringList> data);
+    QVector<QStringList> deserialize(const QByteArray& byteArray);
+    void createActions();
+    void createMenus(QString iface);
 
 private slots:
 
@@ -943,6 +975,14 @@ private slots:
     void on_SET_AVAIL_LANG_LIST_itemClicked(QListWidgetItem *item);
 
     void on_TIMER_LIST_ACTIVE_itemClicked(QListWidgetItem *item);
+
+    void on_RECIPE_read_clicked();
+
+    void on_RECIPE_speak_clicked();
+
+private:
+    QWebSocketServer *m_pWebSocketServer;
+    QList<QWebSocket *> m_clients;
 
 private:
     Ui::MainWindow *ui;

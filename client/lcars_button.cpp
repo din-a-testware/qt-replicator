@@ -1,6 +1,6 @@
 #include "lcars_button.h"
 #include <QPainter>
-//#include <QMouseEvent>
+#include <QMouseEvent>
 #include <QDebug>
 #include <QPushButton>
 #include <QStyleOptionButton>
@@ -8,22 +8,13 @@
 LCARS_Button::LCARS_Button(QWidget *parent) :
 QPushButton(parent) {
 
-    //typedef void (QWidget::*WidgetUpdateSlot)();
-    switch (this->property("RedAlertState").toInt()) {
-    case 0:
-        repaint();
-        break;
-    case 1:
-        repaint();
-        break;
-    case 2:
-        repaint();
-        break;
-
-    default:
-        break;
+    if (this->text()=="") {
+        this->setText("LCARS BUTTON");
     }
+    //qDebug() << this->property("font").toString();
+
 }
+
 
 Qt::Alignment LCARS_Button::getAlignment(int alignnumber) {
 
@@ -219,9 +210,16 @@ void LCARS_Button::paintEvent(QPaintEvent*) {
 
     //! [ -- FONTS -- ]
 
-    QFont Left_Text_Font(this->property("Left_Text_Font").toString()/*"Helvetica Ultra Compressed", 30, QFont::Normal */);
+    QFont Left_Text_Font;
+    Left_Text_Font.fromString(this->property("Left_Text_Font").toString()/*"Helvetica Ultra Compressed", 30, QFont::Normal */);
+    //qDebug() << Left_Text_Font << Left_Text_Font.pointSize();
+    Left_Text_Font.setPointSize(Left_Text_Font.pointSize());
+    //Left_Text_Font.setPointSize(Left_Text_Font.pixelSize()*2);
+    //qDebug() << Left_Text_Font.fromString();
+                //font.setPointSize(font.getPointSize() * 2);
+
     QFont Center_Text_Font(this->font()/*"Helvetica Ultra Compressed", 20, QFont::Normal */);
-    QFont Right_Text_Font(this->property("Right_Text_Font").toString()/*"Helvetica Ultra Compressed", 30, QFont::Normal */);
+    QFont Right_Text_Font(this->font()/*this->property("Right_Text_Font").toString()*(/*"Helvetica Ultra Compressed", 30, QFont::Normal */);
 
     int Text_Center_Distance_Right = this->property("Text_Center_Distance_Right").toInt(); //15;
     int Text_Center_Distance_Left = this->property("Text_Center_Distance_Left").toInt(); //0;
@@ -357,7 +355,7 @@ QVector<QRect> LCARS_Button::getRect(QRect rect_topLeftEdge, QRect rect_bottomLe
 
            topLeftPoint= QPoint(rect_bottomLeftEdge.x(),rect_topLeftEdge.height()/2);
            bottomRightPoint = QPoint(rect_bottomLeftEdge.width()/2-1,(rect_bottomLeftEdge.y()+rect_bottomLeftEdge.height()/2)-1);
-          // qDebug() << "brp-1" << rect_bottomLeftEdge.y()+rect_bottomLeftEdge.height()/2;
+           //qDebug() << "brp-1" << rect_bottomLeftEdge.y()+rect_bottomLeftEdge.height()/2;
 
            leftRect = QRect(topLeftPoint,bottomRightPoint);
            returnVector->append(leftRect);
@@ -393,8 +391,8 @@ QVector<QRect> LCARS_Button::getRect(QRect rect_topLeftEdge, QRect rect_bottomLe
             bottomRightPoint = QPoint(rect_topLeftEdge.width()/2-1,(rect_bottomLeftEdge.y()+rect_bottomLeftEdge.height()/2)-1);
             //qDebug() << "brp1" << rect_bottomLeftEdge.y()+rect_bottomLeftEdge.height()/2;
             leftRect = QRect(topLeftPoint,bottomRightPoint);
-                   //qDebug() << "topLeft, x: " << topLeftPoint.x() << " y:"<< topLeftPoint.y();
-                   //qDebug() << "bottomLeft, x: " << bottomRightPoint.x() << " y:"<< bottomRightPoint.y();
+              //     qDebug() << "topLeft, x: " << topLeftPoint.x() << " y:"<< topLeftPoint.y();
+                //   qDebug() << "bottomLeft, x: " << bottomRightPoint.x() << " y:"<< bottomRightPoint.y();
 
             returnVector->append(leftRect);
 
@@ -483,7 +481,7 @@ return *returnVector;
 int LCARS_Button::getBigger(int x, int y) {
     int checkval = x-y;
 
-    //qDebug() << ((!!checkval) | (checkval >> (8 * sizeof (int) -1)));
+    // qDebug() << ((!!checkval) | (checkval >> (8 * sizeof (int) -1)));
     return ((!!checkval) | (checkval >> (8 * sizeof (int) -1)));
 }
 

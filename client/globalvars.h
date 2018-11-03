@@ -13,9 +13,10 @@ static int systemSpeed = 0;
 static bool redActive;
 static QString deploySystem;
 static bool redAlertKillMe;
-/*static QString musicDB_file = QDir::homePath()+"/replicator-data/databases/music_db.db";*/
 static QString musicDB_file = QDir::homePath()+"/replicator-data/databases/music_db.db";
+//static QString musicDB_file = "qrc:/database/music_db.db";
 static QString settingsDbFile = QDir::homePath()+"/replicator-data/databases/replicator_settings.db";
+//static QString settingsDbFile = "qrc:/database/replicator_settings.db";
 extern bool StopTheRedAlert;
 
 static QString searchSection;

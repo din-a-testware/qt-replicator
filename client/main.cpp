@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     }
 
 
-    MainWindow w;
+    MainWindow w(1702);
     w.setWindowIcon(QIcon(":/images/replicator_database_orange_red.png"));
     //w.setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
 

@@ -1,4 +1,4 @@
-﻿#include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "videofullscreen.h"
 #include "extra_functions.h"
@@ -49,8 +49,18 @@
 #include "videofullscreen.h"
 #include <QListWidgetItem>
 
+#include <QTextToSpeech>
+
+#include <QtWidgets/QApplication>
+#include <QtCore/QDebug>
+#include <QtGui/QIcon>
+#include <QtWidgets/QSystemTrayIcon>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QWebSocketServer>
 
 
+#include "remote_control.h"
 
 static qreal getPeakValue(const QAudioFormat &format);
 static QVector<qreal> getBufferLevels(const QAudioBuffer &buffer);
@@ -58,10 +68,31 @@ static QVector<qreal> getBufferLevels(const QAudioBuffer &buffer);
 template <class T>
 static QVector<qreal> getBufferLevels(const T *buffer, int frames, int channels);
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(quint16 port, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+    quint16 portServer=port;
+
+    m_pWebSocketServer = new QWebSocketServer(QStringLiteral("Replicator Server"),
+                                              QWebSocketServer::NonSecureMode,
+                                              this);
+
+    if (m_pWebSocketServer->listen(QHostAddress::Any, portServer))
+    {
+
+        //old_qDebug() << "Replicator database server listening on port" << portServer;
+
+
+        //old_qDebug() << QCoreApplication::applicationPid();
+
+        connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
+                this, &MainWindow::onNewConnection);
+
+        connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
+                this, &MainWindow::onSslErrors);
+    }
 
     Q_UNUSED(systemSpeed);
     Q_UNUSED(devmode);
@@ -74,15 +105,103 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+void MainWindow::onNewConnection() {
+    QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+
+    //old_qDebug() << "Client connected:" << pSocket->peerName() << pSocket->origin();
+
+    connect(pSocket, &QWebSocket::textMessageReceived, this, &MainWindow::processTextMessage);
+    connect(pSocket, &QWebSocket::binaryMessageReceived,
+            this, &MainWindow::processBinaryMessage);
+    connect(pSocket, &QWebSocket::disconnected, this, &MainWindow::socketDisconnected);
+
+    pSocket->sendTextMessage(QString("123 Access to LCARS granted!").toUpper());
+    m_clients << pSocket;
+}
+
+void MainWindow::processTextMessage(QString message) {
+
+Remote_Control->process_message(message, *timer, *Sound_RedAlert,all_widgets);
+
+    /*qDebug() << message;
+    if (message=="connect") {
+
+        qDebug() << "client connected";
+
+    } else if (message=="alert_blue"){
+
+
+
+        Sound_RedAlert->stop();
+
+
+
+       if (timer->isActive()) {
+                StopTheRedAlert=true;
+                timer->stop();
+            }
+
+
+        qDebug() << "alert condition blue";
+
+
+    } else if (message=="alert_yellow"){
+
+        qDebug() << "alert condition yellow";
+
+    } else if (message=="alert_red") {
+
+
+
+        Sound_RedAlert->play();
+
+
+
+       if (!timer->isActive()) {
+                StopTheRedAlert=false;
+                timer->start(0);
+            }
+       foreach (QWidget* q,all_widgets) {
+            if (q->property("RedAlertState").isValid()) {
+                q->setProperty("RedAlertState",1);
+                q->repaint();
+            }
+        }
+
+
+
+
+        qDebug() << "alert condition red";
+
+    } else if (message=="system_reboot"){
+
+        qDebug() << "system reboot";
+
+    } else if (message=="system_shutdown"){
+
+        qDebug() << "system shutdown";
+
+    }*/
+
+}
+void MainWindow::processBinaryMessage(QByteArray message) {}
+void MainWindow::socketDisconnected() {}
+void MainWindow::onSslErrors(const QList<QSslError> &errors) {}
+void MainWindow::createActions() {}
+void MainWindow::createMenus(QString iface) {}
+QByteArray MainWindow::serialize(QVector<QStringList> data) {}
+QVector<QStringList> MainWindow::deserialize(const QByteArray& byteArray) {}
+
 
 void MainWindow::initReplicator() {
 
         ui->MEDIA_CONTROLS_CONTENTS->setVisible(false);
         ui->controls->setVisible(false);
+        //ui->RECIPE_read->setVisible(false);
         ui->PAGES->setCurrentWidget(ui->START);
-        qDebug() << "[0]";
+        //old_qDebug() << "[0]";
         currentLanguage = settingsClass->loadSetting("SELECT `code` FROM translation_codes WHERE `selected` = '1'").at(0).at(0);
-        qDebug() << "[1]";
+        //old_qDebug() << "[1]";
         loadSettings(currentLanguage);
         serverSettings();
         widgetsSettings();
@@ -105,7 +224,7 @@ void MainWindow::widgetsSettings() {
 
     int i=0;
     foreach (QListWidgetItem itemIterator, listItemLanguage) {
-    qDebug() << itemIterator.text();
+    //old_qDebug() << itemIterator.text();
         QListWidgetItem *newItem = new QListWidgetItem;
         newItem->setData(Qt::DisplayRole,itemIterator.data(Qt::DisplayRole));
         newItem->setData(Qt::UserRole,itemIterator.data(Qt::UserRole));
@@ -239,7 +358,7 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
     }
 
     if (ui->TIMER_LIST_ACTIVE->selectedItems().count() >0) {
-        qDebug() << "ausgewählt" << timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->timerId();
+        //old_qDebug() << "ausgewählt" << timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->timerId();
         qint64 timerTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt();
         if (newTimer->timerId() == timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->timerId()) {
 
@@ -284,7 +403,7 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
             QDateTime endTime = currentListItem->data(Qt::UserRole+2).toDateTime();
             if (endTime.msecsTo(currentDateTime)+1000 < timerTime) {
                 qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
-                qDebug() << currentListItem->data(Qt::DisplayRole).toString()<< ":" << asdf;
+                //old_qDebug() << currentListItem->data(Qt::DisplayRole).toString()<< ":" << asdf;
             } else {
                 Sound_RedAlert->play();
 
@@ -305,6 +424,14 @@ void MainWindow::countdownTimerTimeout(QTimer *newTimer, QString title, QListWid
                  }
                 ui->AW_RED_ALERT_TEXT->setText(currentListItem->data(Qt::DisplayRole).toString());
                 ui->PAGES->setCurrentWidget(ui->ALARM_WINDOW);
+
+                QMovie *movie = new QMovie(":/images/red_alert.gif");
+                //QLabel *processLabel = new QLabel(this);
+                //processLabel->setMovie(movie);
+                ui->AW_REDALERT_LABEL->setMovie(movie);
+                movie->start();
+
+
                 ui->TIMER_BUTTON_ACTIVE->setProperty("Text_Left",QString::number(ui->TIMER_LIST_ACTIVE->count()-1));
                 delete timerList.at(currentListItem->data(Qt::UserRole).toInt());
                 delete currentListItem;
@@ -352,7 +479,8 @@ void MainWindow::mediaSettings() {
 
      QSqlQuery queryAmbient("SELECT `id`,`title`,`file`,`volume` FROM ambient_sounds");
      //qDebug() << "SELECT `id`,`title`,file`,`volume` FROM ambient_sounds";
-     if (queryAmbient.lastError().isValid()){} else {qDebug() << queryAmbient.lastError().text();}
+     if (queryAmbient.lastError().isValid()){} else {//old_qDebug() << queryAmbient.lastError().text();
+     }
      queryAmbient.exec();
 
 
@@ -833,7 +961,7 @@ void MainWindow::searchOK(QString section, QString searchTerm) {
 }
 void MainWindow::loadSettings(const QString& LANG_CODE) {
 
-qDebug() << "loadSettings";
+//old_qDebug() << "loadSettings";
 
 
 
@@ -1366,7 +1494,7 @@ void MainWindow::connections() {
 
     void (QDoubleSpinBox::*mySignal)(double) = &QDoubleSpinBox::valueChanged;
     connect(ui->GUI_SCALE_SPINNER, mySignal, this, [this](double value){
-        qDebug() << qgetenv("Q_SCALE_FACTOR");
+        //old_qDebug() << qgetenv("Q_SCALE_FACTOR");
         QString scaleFactor = QString::number(value);
         qputenv("Q_SCALE_FACTOR",qPrintable(scaleFactor));
     });
@@ -2210,7 +2338,7 @@ void MainWindow::connections() {
     });
 
     connect(ui->SERVER_PORT_EDIT,&QPushButton::clicked,[=]() {
-        current_widget=ui->SETTINGS;
+        current_widget=ui->SETTINGS;AnimationClass->RedAlertFlash();
         searchSection="remote_settings_port";
         ui->SEARCHTEXT->clear();
         ui->SEARCHTEXT->appendPlainText(ui->PortServerLabel_remote->text());
@@ -2279,6 +2407,7 @@ void MainWindow::showTime()
 {
     ////!*qDebug() << "22";
     /* TIMER FOR CURRENT TIME LABEL */
+    if (redActive==false) {
     QCoreApplication::processEvents(QEventLoop::AllEvents);
     QTime time = QTime::currentTime();
     QString text = time.toString("hh:mm:ss");
@@ -2313,13 +2442,14 @@ void MainWindow::showTime()
      else if (m_webSocket->state() == QAbstractSocket::ConnectedState) {
 
      }
-     extra_functions::delay(200);
+     //extra_functions::delay(200);
      if ( m_webSocket->state() == QAbstractSocket::UnconnectedState) {
          m_webSocket->open(QUrl(url));
 
      }
      else if (m_webSocket->state() == QAbstractSocket::ConnectedState) {
 
+     }
      }
 
 }
@@ -2498,10 +2628,10 @@ void MainWindow::onBinaryMessageRecieved(QByteArray message) {
                QStringList resultItems = replicationData[i];
                 //qDebug() << resultItems;
 
-               qDebug() << resultItems.count();
+               //old_qDebug() << resultItems.count();
 
                for (int ii=0; ii<resultItems.count(); ii++) {
-                   qDebug() << resultItems.at(ii);
+                   //old_qDebug() << resultItems.at(ii);
                }
 
 
@@ -2882,7 +3012,33 @@ void MainWindow::on_TIMER_START_clicked()
     timerList.at(lastID)->start();
 
 
+    //ui->TIMER_LIST_ACTIVE->setCurrentRow(lastID);
+    ui->TIMER_LIST_ACTIVE->setCurrentItem(newTimerItem);
 
+/*
+
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    qint64 timerTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt();
+
+
+           QDateTime endTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime();
+
+            if (timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->isActive()) {
+            if (endTime.msecsTo(currentDateTime) < timerTime) {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                qDebug() << timerTime-(endTime.msecsTo(currentDateTime));
+                setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString()+":"+QString::number(timerTime-(endTime.msecsTo(currentDateTime))),endTime);
+            } else {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->stop();
+
+                setTimerLabel(0,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),endTime);
+            }
+            } else {
+                qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
+                setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString(),endTime);
+            }
+*/
 
 
     //!*qDebug() << "mainwindow" << redActive;
@@ -3263,7 +3419,7 @@ void MainWindow::on_TIMER_PAUSE_clicked()
             qint64 currentDateMsecs = QDateTime::currentMSecsSinceEpoch();
             QDateTime endTime = QDateTime::currentDateTime();
                       endTime.addMSecs(timerMsecs);
-            qDebug() << "currentDateMsecs" << currentDateMsecs << "endtime" << currentDateMsecs + timerMsecs << "diff" << (currentDateMsecs+timerMsecs)-currentDateMsecs;
+            //old_qDebug() << "currentDateMsecs" << currentDateMsecs << "endtime" << currentDateMsecs + timerMsecs << "diff" << (currentDateMsecs+timerMsecs)-currentDateMsecs;
 
             ui->TIMER_LIST_ACTIVE->currentItem()->setData(Qt::UserRole+2, endTime);
             if (((currentDateMsecs+timerMsecs)-currentDateMsecs) != ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+1).toInt()) {
@@ -3276,7 +3432,7 @@ void MainWindow::on_TIMER_PAUSE_clicked()
             timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->blockSignals(true);
 
             QDateTime endTime = ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole+2).toDateTime();
-            qDebug() << "pause:"<< timerTime-(endTime.msecsTo(currentDateTime));
+            //old_qDebug() << "pause:"<< timerTime-(endTime.msecsTo(currentDateTime));
 
             timerTime = timerTime-(endTime.msecsTo(currentDateTime));
             ui->TIMER_LIST_ACTIVE->currentItem()->setData(Qt::UserRole+1,timerTime);
@@ -4307,9 +4463,9 @@ void MainWindow::on_VIDEO_BUTTON_BACK_clicked()
     ui->VIDEO_TABS->setCurrentIndex(ui->VIDEO_TABS->count()-1);
     ui->VIDEO_TABS->setCurrentIndex(ui->VIDEO_TABS->count()-1);
 
-    qDebug() << "ftcnt" << ui->VIDEO_TABS->count();
-    qDebug() << "fs" << rippedOffTab->objectName();
-    qDebug() << "fs2" << ui->MEDIA_TABS->currentWidget()->objectName();*/
+    //old_qDebug() << "ftcnt" << ui->VIDEO_TABS->count();
+    //old_qDebug() << "fs" << rippedOffTab->objectName();
+    //old_qDebug() << "fs2" << ui->MEDIA_TABS->currentWidget()->objectName();*/
 
     ui->VIDEO_TABS->addTab(rippedOffTab,"tab2");
     rippedOffTab->setWindowFlags(Qt::Widget);
@@ -5972,7 +6128,7 @@ void MainWindow::on_VIDEO_MAXIMIZE_clicked()
     //////rippedOffTab->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     //////rippedOffTab->showFullScreen();
 
-    qDebug() << ui->VIDEO_MAXIMIZE->isChecked();
+    //old_qDebug() << ui->VIDEO_MAXIMIZE->isChecked();
 
     switch (videoIsFullscreen) {
     case true:
@@ -6100,7 +6256,7 @@ void MainWindow::on_TIMER_LIST_ACTIVE_itemClicked(QListWidgetItem *item)
             if (timerList.at(ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::UserRole).toInt())->isActive()) {
             if (endTime.msecsTo(currentDateTime) < timerTime) {
                 qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
-                qDebug() << timerTime-(endTime.msecsTo(currentDateTime));
+                //old_qDebug() << timerTime-(endTime.msecsTo(currentDateTime));
                 setTimerLabel(asdf,ui->TIMER_LIST_ACTIVE->currentItem()->data(Qt::DisplayRole).toString()+":"+QString::number(timerTime-(endTime.msecsTo(currentDateTime))),endTime);
             } else {
                 qint64 asdf = timerTime-(endTime.msecsTo(currentDateTime));
@@ -6115,4 +6271,41 @@ void MainWindow::on_TIMER_LIST_ACTIVE_itemClicked(QListWidgetItem *item)
     }
 
     //ui->lineEdit->setText(item->data(Qt::DisplayRole).toString());
+}
+
+void MainWindow::on_RECIPE_read_clicked()
+{
+    //RECIPE_TEXT
+    QString program = "espeak";
+    QStringList arguments;
+    arguments << "-v" << "de" << "-p" << "30" << "-s" << "140" << ui->RECIPE_TEXT->toPlainText();
+
+    QProcess *myProcess = new QProcess(this);
+    myProcess->setObjectName("runningEspeak");
+    myProcess->start(program, arguments);
+    //myProcess->waitForFinished();
+}
+
+/*void MainWindow::on_RECIPE_Ingredients_next_2_clicked()
+{
+
+}
+*/
+
+void MainWindow::on_RECIPE_speak_clicked()
+{
+    /*QString program = "espeak";
+    QStringList arguments;
+    arguments << "-v" << "de" << "-p" << "30" << "-s" << "140" << ui->RECIPE_TEXT->toPlainText();
+
+    QProcess *myProcess = new QProcess(this);
+    myProcess->setObjectName("runningEspeak");
+    myProcess->start(program, arguments);*/
+    //myProcess->waitForFinished();
+
+
+    m_speech = new QTextToSpeech(this);
+    /*connect(m_speech, &QTextToSpeech::stateChanged,
+            this, &Window::stateChanged);*/
+    m_speech->say(ui->RECIPE_TEXT->toPlainText());
 }

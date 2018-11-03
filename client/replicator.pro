@@ -6,6 +6,7 @@
 
 QT       += core gui websockets xml network multimedia xmlpatterns multimediawidgets network
 QT       += sql
+QT += texttospeech
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = replicator-client
@@ -37,7 +38,6 @@ DEFINES -= -WUnused-parameter
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     extra_functions.cpp \
     process_data.cpp \
     lockscreen.cpp \
@@ -61,7 +61,9 @@ SOURCES += \
     listdelegateedge.cpp \
     listdelegatenotes.cpp \
     videofullscreen.cpp \
-    listdelegatelanguages.cpp
+    listdelegatelanguages.cpp \
+    mainwindow.cpp \
+    remote_control.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -89,7 +91,9 @@ HEADERS += \
     listdelegateedge.h \
     listdelegatenotes.h \
     videofullscreen.h \
-    listdelegatelanguages.h
+    listdelegatelanguages.h \
+    #mainwindow.cpp_old
+    remote_control.h
 
 FORMS += \
     mainwindow.ui \
@@ -101,11 +105,13 @@ RESOURCES += \
     resources.qrc
 
 CONFIG += c++11
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 DISTFILES += \
     cleanup.sh \
     roundededgeconnector.json \
     lcars_line.json \
     lcars_sliders.json \
-    lcars_slider.json
-
+    lcars_slider.json \
+    truncated \
+    main_new.txt

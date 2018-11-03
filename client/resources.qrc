@@ -213,7 +213,11 @@
         <file>UFP-Logo_even.png</file>
         <file>colors.gif</file>
     </qresource>
-    <qresource prefix="/database"/>
+    <qresource prefix="/database">
+        <file>replicator_settings.db</file>
+        <file>ambient.db</file>
+        <file>music_db.db</file>
+    </qresource>
     <qresource prefix="/fonts">
         <file>Helvetica_Ultra_Compressed.ttf</file>
         <file>webdings.ttf</file>
